@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User } from '../types';
 import {
   loginUserRemote,
   registerUserRemote,
   resetPasswordRemote,
+  syncAllUsersFromBackend,
 } from '../utils/authStorage';
 import { playSound } from '../utils/audio';
 import {
@@ -31,6 +32,11 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onSuccess, lang = 'lo' }
   // Mode: 'login' | 'register' | 'forgot'
   const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Auto-sync existing registered accounts from server on load
+  useEffect(() => {
+    syncAllUsersFromBackend().catch(() => {});
+  }, []);
 
   // Login states
   const [loginIdentifier, setLoginIdentifier] = useState('');

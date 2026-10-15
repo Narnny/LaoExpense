@@ -27,22 +27,71 @@ export function normalizePhone(phone: string): string {
 
 export function getStoredUsers(): User[] {
   try {
-    const raw = localStorage.getItem(AUTH_STORAGE_KEYS.USERS);
-    if (raw) {
-      const users: User[] = JSON.parse(raw);
-      if (Array.isArray(users)) {
-        // Filter out any leftover demo accounts
-        const realUsers = users.filter(u => u.id !== 'usr_somxay_1' && u.id !== 'usr_daovone_2');
-        if (realUsers.length !== users.length) {
-          saveUsers(realUsers);
+    const collected: User[] = [];
+    const keysToCheck = [
+      AUTH_STORAGE_KEYS.USERS,
+      'lao_expense_users',
+      'lao_expense_users_v1',
+      'lao_expense_user',
+      'users',
+    ];
+
+    keysToCheck.forEach(key => {
+      try {
+        const raw = localStorage.getItem(key);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            parsed.forEach(u => {
+              if (u && u.id && u.id !== 'usr_somxay_1' && u.id !== 'usr_daovone_2') {
+                if (!collected.some(ex => ex.id === u.id || ex.phone === u.phone || ex.username === u.username)) {
+                  collected.push(u);
+                }
+              }
+            });
+          } else if (parsed && typeof parsed === 'object' && parsed.id) {
+            if (parsed.id !== 'usr_somxay_1' && parsed.id !== 'usr_daovone_2') {
+              if (!collected.some(ex => ex.id === parsed.id || ex.phone === parsed.phone || ex.username === parsed.username)) {
+                collected.push(parsed);
+              }
+            }
+          }
         }
-        return realUsers;
-      }
+      } catch {}
+    });
+
+    if (collected.length > 0) {
+      saveUsers(collected);
+      return collected;
     }
   } catch {
     // fallback
   }
   return [];
+}
+
+// Download registered users from server to ensure cross-device recovery
+export async function syncAllUsersFromBackend(): Promise<User[]> {
+  try {
+    const res = await fetch('/api/auth/users');
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success && Array.isArray(data.users)) {
+        const localUsers = getStoredUsers();
+        const mergedMap = new Map<string, User>();
+        localUsers.forEach(u => mergedMap.set(u.id, u));
+        data.users.forEach((u: User) => {
+          if (u && u.id) mergedMap.set(u.id, u);
+        });
+        const merged = Array.from(mergedMap.values());
+        saveUsers(merged);
+        return merged;
+      }
+    }
+  } catch (err) {
+    console.warn('Sync users from backend warning:', err);
+  }
+  return getStoredUsers();
 }
 
 export function saveUsers(users: User[]): void {
@@ -163,18 +212,9 @@ export async function loginUserRemote(
       // Save to Realtime Database in background
       saveUserToRTDB(serverUser).catch(() => {});
       return { success: true, user: serverUser };
-    } else if (data) {
-      return {
-        success: false,
-        error: data.error,
-        found: data.found,
-        accountName: data.accountName,
-        accountPhone: data.accountPhone,
-        userId: data.userId,
-      };
     }
   } catch (err) {
-    console.warn('Server login fetch failed, falling back to local storage:', err);
+    console.warn('Server login fetch failed, falling back to RTDB and local storage:', err);
   }
 
   // 2. Try Firebase Realtime Database fallback directly
@@ -191,15 +231,13 @@ export async function loginUserRemote(
         if (rtdbTxs.length > 0) {
           saveUserTransactions(rtdbUser.id, rtdbTxs);
         }
+        // Auto heal: sync to server so server database saves the user
+        syncUserProfileToServer(rtdbUser);
         return { success: true, user: rtdbUser };
       } else {
         return {
           success: false,
-          found: true,
-          accountName: rtdbUser.fullName || rtdbUser.username,
-          accountPhone: rtdbUser.phone,
-          userId: rtdbUser.id,
-          error: `ພົບບັນຊີ "${rtdbUser.fullName}" ແຕ່ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ`,
+          error: 'ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ (Incorrect password). ກະລຸນາລອງໃໝ່ ຫຼື ໃຊ້ເມນູ "ລືມລະຫັດຜ່ານ".',
         };
       }
     }
@@ -209,9 +247,17 @@ export async function loginUserRemote(
 
   // 3. Fallback to local storage verification
   const localRes = loginUser(cleanId, cleanPass);
-  if (localRes.success) return localRes;
+  if (localRes.success && localRes.user) {
+    // Auto heal: sync to server and RTDB so it is safe permanently
+    syncUserProfileToServer(localRes.user);
+    saveUserToRTDB(localRes.user).catch(() => {});
+    return localRes;
+  }
 
-  return localRes;
+  return {
+    success: false,
+    error: 'ເບີໂທ, ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ. ກະລຸນາກວດຄືນ ຫຼື ໃຊ້ "ລືມລະຫັດຜ່ານ" ເພື່ອຕັ້ງລະຫັດໃໝ່.',
+  };
 }
 
 // Reset Password / Forgot Password Remote (Works by Phone, Name, or Username)

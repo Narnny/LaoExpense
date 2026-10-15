@@ -199,6 +199,15 @@ app.get('/api/auth/find-account', (req, res) => {
   });
 });
 
+// Get all active registered users to allow immediate sync across clients
+app.get('/api/auth/users', (req, res) => {
+  const db = readDB();
+  res.json({
+    success: true,
+    users: db.users,
+  });
+});
+
 // Register User
 app.post('/api/auth/register', (req, res) => {
   const { phone, username, fullName, password, avatarColor } = req.body;
