@@ -1,0 +1,290 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Noto Sans Lao', 'Noto Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+@layer base {
+  *, ::before, ::after {
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+  html, body, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, span, table, th, td, div {
+    font-family: 'Noto Sans Lao', 'Noto Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    background-color: #090d16;
+    color: #f1f5f9;
+  }
+  .tabular-nums, .font-mono, [class*="font-mono"] {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Enforce pure Noto Sans Lao on the entire printable document */
+#printable-area, #printable-area *, .printable-sheet, .printable-sheet * {
+  font-family: 'Noto Sans Lao', 'Noto Sans', sans-serif !important;
+}
+
+/* Custom subtle scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #090d16;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* ============================================================
+   LIGHT THEME STYLING
+   ============================================================ */
+html[data-theme="light"],
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+[data-theme="light"] body {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+/* Base borders in light theme */
+[data-theme="light"] *,
+[data-theme="light"] *::before,
+[data-theme="light"] *::after {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+/* Background surfaces */
+[data-theme="light"] .bg-\[\#070d1e\],
+[data-theme="light"] .bg-\[\#0a1128\],
+[data-theme="light"] .bg-\[\#090d16\],
+[data-theme="light"] .bg-\[\#0d162e\] {
+  background-color: #f8fafc !important;
+}
+
+[data-theme="light"] aside {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] header {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* Card panels */
+[data-theme="light"] .bg-slate-900,
+[data-theme="light"] .bg-slate-950,
+[data-theme="light"] .bg-\[\#0f1b38\],
+[data-theme="light"] .bg-\[\#132247\] {
+  background-color: #ffffff !important;
+}
+
+[data-theme="light"] .bg-slate-900\/40,
+[data-theme="light"] .bg-slate-900\/50,
+[data-theme="light"] .bg-slate-900\/60,
+[data-theme="light"] .bg-slate-900\/80,
+[data-theme="light"] .bg-slate-900\/90,
+[data-theme="light"] .bg-slate-950\/40,
+[data-theme="light"] .bg-slate-950\/50,
+[data-theme="light"] .bg-slate-950\/60,
+[data-theme="light"] .bg-slate-950\/80 {
+  background-color: #f1f5f9 !important;
+}
+
+[data-theme="light"] .bg-slate-800 {
+  background-color: #f1f5f9 !important;
+}
+
+/* Hover surfaces */
+[data-theme="light"] .hover\:bg-slate-800:hover,
+[data-theme="light"] .hover\:bg-slate-850:hover,
+[data-theme="light"] .hover\:bg-slate-900:hover,
+[data-theme="light"] .hover\:bg-slate-950:hover {
+  background-color: #e2e8f0 !important;
+}
+
+/* Borders */
+[data-theme="light"] .border-slate-800,
+[data-theme="light"] .border-slate-800\/80,
+[data-theme="light"] .border-slate-800\/60,
+[data-theme="light"] .border-slate-800\/40,
+[data-theme="light"] .border-slate-700,
+[data-theme="light"] .border-slate-700\/80,
+[data-theme="light"] .border-slate-700\/60 {
+  border-color: #e2e8f0 !important;
+}
+
+/* Text Hierarchy */
+[data-theme="light"] .text-white,
+[data-theme="light"] .text-slate-100,
+[data-theme="light"] .text-slate-200 {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .text-slate-300,
+[data-theme="light"] .text-slate-400 {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .text-slate-500 {
+  color: #64748b !important;
+}
+
+[data-theme="light"] .placeholder\:text-slate-400::placeholder,
+[data-theme="light"] .placeholder\:text-slate-500::placeholder,
+[data-theme="light"] .placeholder\:text-slate-600::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Form Controls */
+[data-theme="light"] input:not([type="checkbox"]):not([type="radio"]),
+[data-theme="light"] select,
+[data-theme="light"] textarea {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] input:focus,
+[data-theme="light"] select:focus,
+[data-theme="light"] textarea:focus {
+  border-color: #2563eb !important;
+  background-color: #ffffff !important;
+}
+
+/* Preserve bright colored text in buttons & pills */
+[data-theme="light"] .bg-blue-600,
+[data-theme="light"] .bg-blue-500,
+[data-theme="light"] .bg-emerald-600,
+[data-theme="light"] .bg-emerald-500,
+[data-theme="light"] .bg-rose-600,
+[data-theme="light"] .bg-rose-500,
+[data-theme="light"] .bg-amber-600,
+[data-theme="light"] .bg-amber-500,
+[data-theme="light"] .bg-indigo-600,
+[data-theme="light"] .bg-gradient-to-r,
+[data-theme="light"] .bg-gradient-to-tr {
+  color: #ffffff !important;
+}
+
+[data-theme="light"] .bg-blue-600 *,
+[data-theme="light"] .bg-emerald-600 *,
+[data-theme="light"] .bg-rose-600 *,
+[data-theme="light"] .bg-indigo-600 * {
+  color: #ffffff !important;
+}
+
+/* Colored accent badges and highlights in light mode */
+[data-theme="light"] .bg-emerald-950\/40,
+[data-theme="light"] .bg-emerald-950\/50,
+[data-theme="light"] .bg-emerald-500\/10,
+[data-theme="light"] .bg-emerald-500\/20 {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+}
+[data-theme="light"] .bg-emerald-950\/40 span,
+[data-theme="light"] .bg-emerald-500\/10 span,
+[data-theme="light"] .text-emerald-300 {
+  color: #059669 !important;
+}
+
+[data-theme="light"] .bg-rose-950\/20,
+[data-theme="light"] .bg-rose-950\/40,
+[data-theme="light"] .bg-rose-500\/10,
+[data-theme="light"] .bg-rose-500\/20 {
+  background-color: #fff1f2 !important;
+  border-color: #fecdd3 !important;
+}
+[data-theme="light"] .bg-rose-500\/10 span,
+[data-theme="light"] .text-rose-300 {
+  color: #e11d48 !important;
+}
+
+[data-theme="light"] .bg-amber-950\/30,
+[data-theme="light"] .bg-amber-950\/40,
+[data-theme="light"] .bg-amber-500\/10,
+[data-theme="light"] .bg-amber-500\/20 {
+  background-color: #fffbeb !important;
+  border-color: #fde68a !important;
+}
+[data-theme="light"] .text-amber-300,
+[data-theme="light"] .text-amber-200 {
+  color: #b45309 !important;
+}
+
+[data-theme="light"] .bg-blue-950\/30,
+[data-theme="light"] .bg-blue-950\/40,
+[data-theme="light"] .bg-blue-500\/10,
+[data-theme="light"] .bg-blue-500\/20 {
+  background-color: #eff6ff !important;
+  border-color: #bfdbfe !important;
+}
+[data-theme="light"] .text-blue-300,
+[data-theme="light"] .text-blue-200 {
+  color: #1d4ed8 !important;
+}
+
+/* Modals backdrop */
+[data-theme="light"] .bg-black\/70,
+[data-theme="light"] .bg-black\/80 {
+  background-color: rgba(15, 23, 42, 0.4) !important;
+}
+
+/* Custom scrollbars in light mode */
+[data-theme="light"] ::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+@page {
+  size: A4 portrait;
+  margin: 12mm 12mm 15mm 12mm;
+}
+
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt !important;
+    font-family: 'Noto Sans Lao', 'Noto Sans', sans-serif !important;
+  }
+  *, *::before, *::after {
+    font-family: 'Noto Sans Lao', 'Noto Sans', sans-serif !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  table {
+    page-break-inside: auto;
+  }
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+  thead {
+    display: table-header-group;
+  }
+  tfoot {
+    display: table-footer-group;
+  }
+}
